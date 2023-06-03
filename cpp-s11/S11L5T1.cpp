@@ -51,26 +51,13 @@ vector<Person> ReadPeople(istream& input) {
     return result;
 }
 
-int main() {
+void TestConst() {
+    vector<Person> people = ReadPeople(cin);
 
-    const vector<Person> people = [] {
-        int count;
-        cin >> count;
-
-        vector<Person> result(count);
-        for (Person& p : result) {
-            char gender;
-            cin >> p.name >> p.age >> p.income >> gender;
-            p.is_male = gender == 'M';
-        }
-
-        sort(result.begin(), result.end(),
-            [](const Person& lhs, const Person& rhs) {
-                return lhs.age < rhs.age;
-            });
-
-        return result;
-    }();
+    sort(people.begin(), people.end(),
+        [](const Person& lhs, const Person& rhs) {
+            return lhs.age < rhs.age;
+        });
 
     for (string command; cin >> command;) {
         if (command == "AGE"s) {
@@ -89,27 +76,25 @@ int main() {
             int count;
             cin >> count;
 
-            vector<Person> p1 = people;
-            auto head = Head(p1, count);
+            auto head = Head(people, count);
 
-            partial_sort(head.begin(), head.end(), p1.end(),
+            partial_sort(head.begin(), head.end(), people.end(),
                 [](const Person& lhs, const Person& rhs) {
                     return lhs.income > rhs.income;
                 });
 
-                int total_income = accumulate(head.begin(), head.end(), 0, [](int cur, Person& p) {
-                return p.income += cur;
+            int total_income = accumulate(head.begin(), head.end(), 0, [](int cur, const Person& p) {
+                return cur += p.income;
                 });
-
             cout << "Top-"s << count << " people have total income "s << total_income << '\n';
         }
         else if (command == "POPULAR_NAME"s) {
             char gender;
             cin >> gender;
-            vector<Person> p2 = people;
-            IteratorRange range{ p2.begin(), partition(p2.begin(), p2.end(),
-                                [gender](Person& p) {
-                                    return p.is_male = (gender == 'M');
+
+            IteratorRange range{ people.begin(), partition(people.begin(), people.end(),
+                                [gender](const Person& p) {
+                                    return p.is_male == (gender == 'M');
                                 }) };
             if (range.begin() == range.end()) {
                 cout << "No people of gender "s << gender << '\n';
