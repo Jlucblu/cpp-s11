@@ -131,6 +131,12 @@
     <ClCompile Include="S11L5T1.cpp" />
     <ClCompile Include="S11L6T1.cpp" />
     <ClCompile Include="S11L6T2.cpp" />
+    <ClCompile Include="S11L6T4.cpp" />
+    <ClCompile Include="S11L6T5.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="compressor.h" />
+    <ClInclude Include="decompressor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
