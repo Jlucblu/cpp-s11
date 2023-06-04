@@ -40,7 +40,7 @@ void Test() {
     assert(GetFileContents("test.txt"s) == GetFileContents("test2.txt"s));
 }
 
-int main(int argc, const char** argv) {
+int TestDecompressor(int argc, const char** argv) {
     if (argc == 1) {
         Test();
         return 0;

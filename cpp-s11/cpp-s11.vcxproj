@@ -133,6 +133,7 @@
     <ClCompile Include="S11L6T2.cpp" />
     <ClCompile Include="S11L6T4.cpp" />
     <ClCompile Include="S11L6T5.cpp" />
+    <ClCompile Include="S11L6T6.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="compressor.h" />
