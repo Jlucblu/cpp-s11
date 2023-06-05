@@ -19,9 +19,8 @@ public:
     UniquePtr(const UniquePtr&) = delete;
 
     UniquePtr(UniquePtr&& other) {
-        UniquePtr<T> ptr;
-        ptr.ptr_ = move(other.ptr_);
-        Swap(ptr);
+        ptr_ = move(other.ptr_);
+        other.ptr_ = nullptr;
     }
 
     UniquePtr& operator=(const UniquePtr&) = delete;
@@ -33,9 +32,9 @@ public:
     }
 
     UniquePtr& operator=(UniquePtr&& other) {
-        UniquePtr<T> ptr;
-        ptr.ptr_ = move(other.ptr_);
-        Swap(ptr);
+        delete ptr_;
+        ptr_ = move(other.ptr_);
+        other.ptr_ = nullptr;
         return *this;
     }
 
