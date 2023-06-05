@@ -40,7 +40,7 @@ void PrintTree(ostream& dst, const path& p, const int offset = 0) {
     }
 }
 
-int main() {
+void TestPrintTree() {
     error_code err;
     filesystem::remove_all("test_dir", err);
     filesystem::create_directories("test_dir"_p / "a"_p, err);
