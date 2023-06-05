@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cstddef>  // нужно для nullptr_t
+#include <utility>
 
 using namespace std;
 
@@ -7,52 +8,58 @@ using namespace std;
 template <typename T>
 class UniquePtr {
 private:
-    T* ptr_;
+    T* ptr_ = nullptr;
+
 public:
-    UniquePtr() {
-        prt_ = nullptr;
-    }
+    UniquePtr() = default;
+    explicit UniquePtr(T* ptr) 
+        : ptr_(ptr)
+    {}
 
-    explicit UniquePtr(T* ptr) {
-
-    }
-    UniquePtr(const UniquePtr&) {
-
-    }
+    UniquePtr(const UniquePtr&) = delete;
 
     UniquePtr(UniquePtr&& other) {
-
+        UniquePtr<T> ptr;
+        ptr.ptr_ = move(other.ptr_);
+        Swap(ptr);
     }
 
-    UniquePtr& operator=(const UniquePtr&) {
-
-    }
+    UniquePtr& operator=(const UniquePtr&) = delete;
 
     UniquePtr& operator=(nullptr_t) {
-
+        delete ptr_;
+        ptr_ = nullptr;
+        return *this;
     }
 
     UniquePtr& operator=(UniquePtr&& other) {
-
+        UniquePtr<T> ptr;
+        ptr.ptr_ = move(other.ptr_);
+        Swap(ptr);
+        return *this;
     }
 
     ~UniquePtr() {
-        delete prt_;
+        delete ptr_;
     }
 
     T& operator*() const {
         return *ptr_;
     }
+
     T* operator->() const {
-        return prt_;
+        return ptr_;
     }
 
     T* Release() {
-
+        T* ptr = ptr_;
+        ptr_ = nullptr;
+        return ptr;
     }
 
     void Reset(T* ptr) {
-
+        delete ptr_;
+        ptr_ = ptr;
     }
 
     void Swap(UniquePtr& other) {
@@ -60,7 +67,7 @@ public:
     }
 
     T* Get() const {
-
+        return ptr_;
     }
 };
 
