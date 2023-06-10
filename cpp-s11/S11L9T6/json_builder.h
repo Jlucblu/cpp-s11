@@ -1,12 +1,14 @@
-#include "json.h"
+п»ї#include "json.h"
 #include <string>
 #include <vector>
 
 
 namespace json {
-    class KeyBuilder;
-    class DictBuilder;
-    class ArrayBuilder;
+
+    class Builder;
+    class KeyItemContext;
+    class DictItemContext;
+    class ArrayItemContext;
 
     class Builder {
     public:
@@ -14,9 +16,9 @@ namespace json {
         Builder();
         ~Builder() = default;
 
-        virtual DictBuilder StartDict();
-        virtual ArrayBuilder StartArray();
-        virtual KeyBuilder Key(std::string key);
+        virtual DictItemContext StartDict();
+        virtual ArrayItemContext StartArray();
+        virtual KeyItemContext Key(std::string key);
         virtual Builder& EndDict();
         virtual Builder& EndArray();
         Builder& Value(Node value);
@@ -30,43 +32,34 @@ namespace json {
     };
 
 
-    class KeyBuilder : public Builder {
+    class DictItemContext : private Builder {
     public:
-        KeyBuilder(Builder&& builder);
-        DictBuilder StartDict() override;
-        ArrayBuilder StartArray() override;
-        DictBuilder Value(Node value);
-    private:
-        Builder& builder_;
-    };
-
-    class DictBuilder : public Builder {
-    public:
-        DictBuilder(Builder&& builder);
-        KeyBuilder Key(std::string key) override;
+        DictItemContext(Builder&& builder);
+        KeyItemContext Key(std::string key) override;
         Builder& EndDict() override;
     private:
         Builder& builder_;
     };
 
-    class ArrayBuilder : public Builder {
+    class KeyItemContext : private Builder {
     public:
-        ArrayBuilder(Builder&& builder);
-        DictBuilder StartDict() override;
-        ArrayBuilder StartArray() override;
+        KeyItemContext(Builder&& builder);
+        DictItemContext StartDict() override;
+        ArrayItemContext StartArray() override;
+        DictItemContext Value(Node value);
+    private:
+        Builder& builder_;
+    };
+
+    class ArrayItemContext : private Builder {
+    public:
+        ArrayItemContext(Builder&& builder);
+        DictItemContext StartDict() override;
+        ArrayItemContext StartArray() override;
         Builder& EndArray() override;
-        ArrayBuilder Value(Node value);
+        ArrayItemContext Value(Node value);
     private:
         Builder& builder_;
     };
 
 } // namespace json;
-
-
-/*
-Непосредственно после Key вызван не Value, не StartDict и не StartArray.
-После вызова Value, последовавшего за вызовом Key, вызван не Key и не EndDict.
-За вызовом StartDict следует не Key и не EndDict.
-За вызовом StartArray следует не Value, не StartDict, не StartArray и не EndArray.
-После вызова StartArray и серии Value следует не Value, не StartDict, не StartArray и не EndArray.
-*/
